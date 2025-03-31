@@ -18,7 +18,7 @@ jobs:
           node-version: 22.14.0
       
       - name: Dependency Installation
-        run: npm install
+        run: npm install -g npm@latest
 
       - name: Npm Update
         run: npm i -g npm-upgrade
