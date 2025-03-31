@@ -18,11 +18,11 @@ jobs:
           node-version: 22.14.0
       
       - name: sync file to S3
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGIION: ap-northeast-1
+          AWS_DEFAULT_REGION: ap-northeast-1
           S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
 
       - name: Dependency Installation
