@@ -23,9 +23,42 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-1
+          
+      - name: Create S3 Bucket with Website Configuration
+        run: |
+          aws s3api create-bucket \
+            --bucket thermalmachine \
+            --region ap-northeast-1
 
-      - name: Build Project
-        run: npm install && npm run build  # Adjust for your framework (e.g., `npm run build`)
+          aws s3api put-public-access-block \
+            --bucket thermalmachine \
+            --public-access-block-configuration "BlockPublicAcls=false,IgnorePublicAcls=false,BlockPublicPolicy=false,RestrictPublicBuckets=false"
 
+          aws s3api put-bucket-website \
+            --bucket thermalmachine \
+            --website-configuration '{
+                "IndexDocument": {
+                    "Suffix": "index.html"
+                },
+                "ErrorDocument": {
+                    "Key": "error.html"
+                }
+            }'
+
+          # Add a bucket policy to allow public read access
+          aws s3api put-bucket-policy \
+            --bucket thermalmachine \
+            --policy '{
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Effect": "Allow",
+                        "Principal": "*",
+                        "Action": "s3:GetObject",
+                        "Resource": "arn:aws:s3:::thermalmachine/*"
+                    }
+                ]
+            }'
+            
       - name: Deploy to S3
         run: aws s3 sync build s3://thermalmachine --delete
